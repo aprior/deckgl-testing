@@ -2,7 +2,7 @@ import './style.css';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import {Deck} from '@deck.gl/core';
-import {BASEMAP, vectorTableSource, VectorTileLayer, h3TableSource, H3TileLayer, colorBins} from '@deck.gl/carto';
+import {BASEMAP, vectorTableSource, VectorTileLayer, h3TableSource, H3TileLayer, colorBins, vectorTilesetSource} from '@deck.gl/carto';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const accessToken = import.meta.env.VITE_API_ACCESS_TOKEN;
@@ -17,18 +17,7 @@ const INITIAL_VIEW_STATE = {
   pitch: 30
 };
 
-const populatedPlacesSource = vectorTableSource({
-  ...cartoConfig,
-  tableName: 'carto-demo-data.demo_tables.populated_places'
-});
-
-const populatedPlacesLayer = new VectorTileLayer({
-  id: 'places',
-  pickable: true,
-  data: populatedPlacesSource,
-  pointRadiusMinPixels: 3,
-  getFillColor: [200, 0, 80]
-});
+// Hex table - US Spatial features
 
 const spatialFeaturesHexSource = h3TableSource({
   ...cartoConfig,
@@ -43,8 +32,8 @@ const spatialFeaturesHexLayer = new H3TileLayer({
   id: 'hexes',
   pickable: true,
   data: spatialFeaturesHexSource,
+  opacity: 0.5,
   // getFillColor: [200, 200, 200], 
-  opacity: 0.7,
   getFillColor: colorBins({
     attr: "SUM(population)",
     domain: [0, 100, 1000, 10000, 100000],
@@ -55,12 +44,41 @@ const spatialFeaturesHexLayer = new H3TileLayer({
   getLineColor: [0, 0 , 0, 0.7],
 })
 
+// Vector table source - Populated places
+
+const populatedPlacesSource = vectorTableSource({
+  ...cartoConfig,
+  tableName: 'carto-demo-data.demo_tables.populated_places'
+});
+
+const populatedPlacesLayer = new VectorTileLayer({
+  id: 'places',
+  pickable: true,
+  data: populatedPlacesSource,
+  pointRadiusMinPixels: 3,
+  getFillColor: [200, 0, 80]
+});
+
+const osmBuildingsSource = vectorTilesetSource({
+  ...cartoConfig,
+  tableName: 'carto-demo-data.demo_tilesets.osm_buildings'
+});
+
+const osmBuildingsLayer = new VectorTileLayer({
+  id: 'buildings',
+  pickable: true,
+  data: osmBuildingsSource,
+  pointRadiusMinPixels: 3,
+  getFillColor: [25, 25, 25]
+});
+
 const deck = new Deck({
   canvas: 'deck-canvas',
   initialViewState: INITIAL_VIEW_STATE,
   controller: true,
   layers: [
     spatialFeaturesHexLayer,
+    osmBuildingsLayer,
     populatedPlacesLayer
   ],
   // getTooltip: ({ object }) => 
