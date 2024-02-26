@@ -2,7 +2,7 @@ import './style.css';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import {Deck} from '@deck.gl/core';
-import {BASEMAP, vectorTableSource, VectorTileLayer, h3TableSource, H3TileLayer, colorBins, vectorTilesetSource} from '@deck.gl/carto';
+import {BASEMAP, vectorTableSource, VectorTileLayer, h3TableSource, H3TileLayer, colorBins, vectorTilesetSource, boundaryQuerySource} from '@deck.gl/carto';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const accessToken = import.meta.env.VITE_API_ACCESS_TOKEN;
@@ -71,6 +71,22 @@ const osmBuildingsLayer = new VectorTileLayer({
   pointRadiusMinPixels: 3,
   getFillColor: [25, 25, 25]
 });
+
+// const boundarySource = boundaryQuerySource({
+//   ...cartoConfig,
+//   tilesetTableName: 'carto-boundaries.us.tileset_usa_state_v1'
+//   // propertiesSqlQuery: `SELECT geoid, value FROM your-project.your_dataset.your_table`,
+//   // matchingColumn: 'geoid',
+//   // queryParameters: {}
+// });
+
+// const boundaryLayer = new VectorTileLayer({
+//   id: 'state-boundaries',
+//   pickable: true,
+//   data: boundarySource,
+//   getLineColor: [0, 0, 0]
+// })
+
 
 const deck = new Deck({
   canvas: 'deck-canvas',
