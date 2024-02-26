@@ -34,7 +34,7 @@ const spatialFeaturesHexSource = h3TableSource({
   ...cartoConfig,
   tableName: 'carto-demo-data.demo_tables.derived_spatialfeatures_usa_h3res8_v1_yearly_v2',
   aggregationExp: 'SUM(population) as total_population',
-  aggregationResLevel: 6,
+  aggregationResLevel: 4,
   spatialDataColumn: 'h3',
   columns: ['h3','population','male','female','urbanity']
 });
@@ -43,7 +43,16 @@ const spatialFeaturesHexLayer = new H3TileLayer({
   id: 'hexes',
   pickable: true,
   data: spatialFeaturesHexSource,
-  getFillColor: [200, 0, 80]
+  // getFillColor: [200, 200, 200], 
+  opacity: 0.7,
+  getFillColor: colorBins({
+    attr: "SUM(population)",
+    domain: [0, 100, 1000, 10000, 100000],
+    colors: "PinkYl",
+    // nullColor: [0, 0, 0]
+  }),
+  stroked: true,
+  getLineColor: [0, 0 , 0, 0.7],
 })
 
 const deck = new Deck({
@@ -51,8 +60,8 @@ const deck = new Deck({
   initialViewState: INITIAL_VIEW_STATE,
   controller: true,
   layers: [
-    populatedPlacesLayer,
-    spatialFeaturesHexLayer
+    spatialFeaturesHexLayer,
+    populatedPlacesLayer
   ],
   // getTooltip: ({ object }) => 
   //   object && {
